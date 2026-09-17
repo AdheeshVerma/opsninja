@@ -1,0 +1,23 @@
+{
+  "name": "@opsninja/cache",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "types": "./type.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "build": "bunx tsc -b"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^26.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "redis": "^5.10.0"
+  }
+}

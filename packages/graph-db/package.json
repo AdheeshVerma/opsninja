@@ -1,0 +1,15 @@
+{
+  "name": "@opsninja/graph-db",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^26.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-neptunedata": "^3.1133.0"
+  }
+}

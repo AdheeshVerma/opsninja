@@ -29,6 +29,7 @@
     "@opsninja/cache": "*",
     "@opsninja/db": "*",
     "@opsninja/graph-db": "*",
+    "@strands-agents/sdk": "^1.18.0",
     "aws-jwt-verify": "^5.2.1",
     "aws-sdk": "^2.1693.0",
     "axios": "^1.13.2",

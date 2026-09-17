@@ -22,7 +22,14 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1130.0",
     "@aws-sdk/client-s3": "^3.991.0",
+    "@aws-sdk/lib-dynamodb": "^3.1127.0",
+    "@google/genai": "^2.22.0",
+    "@opsninja/db": "*",
+    "@opsninja/graph-db": "*",
+    "@opsninja/cache": "*",
+    "aws-jwt-verify": "^5.2.1",
     "aws-sdk": "^2.1693.0",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
@@ -38,6 +45,8 @@
     "hpp": "^0.2.3",
     "jsonwebtoken": "^9.0.3",
     "morgan": "^1.10.1",
-    "nodemailer": "^9.0.3"
+    "node-fetch": "^3.3.2",
+    "nodemailer": "^9.0.3",
+    "zod": "^4.5.4"
   }
 }

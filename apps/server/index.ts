@@ -9,17 +9,16 @@ import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
-import "dotenv/config";
 import morgan from "morgan";
-import dotenv from "dotenv";
+import { getConfigValue, loadConfig } from "./utils/config";
 import { seedDB } from "./utils/db";
 import {
   AtlassianOAuthHandler,
   AtlassianOAuthInitiator,
   cognitoOAuthHandler,
-  PROVIDER_MAPPING,
 } from "./utils/provider";
-dotenv.config({ path: "../.env" });
+
+await loadConfig();
 
 const app: Express = express();
 
@@ -40,7 +39,7 @@ app.use(cookieParser());
 app.set("trust proxy", 1);
 app.use(
   cors({
-    origin: [process.env.FRONTEND_URL || "http://localhost:3000"],
+    origin: [getConfigValue("FRONTEND_URL", "http://localhost:3000")],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: [
@@ -59,10 +58,10 @@ app.get("/", (req, res) => {
     message: "Welcome to the Backend of opsNinja. ",
     version: "1.0.0",
     timestamp: new Date(),
-    environment: process.env.NODE_ENV,
+    environment: getConfigValue("NODE_ENV", "development"),
     memory: process.memoryUsage(),
     uptime: process.uptime(),
-    FRONTEND_URL: process.env.FRONTEND_URL,
+    FRONTEND_URL: getConfigValue("FRONTEND_URL", "http://localhost:3000"),
   });
 });
 app.get("/health", async (req, res) => {
@@ -70,10 +69,10 @@ app.get("/health", async (req, res) => {
     success: true,
     message: "Server is healthy!",
     timestamp: new Date(),
-    environment: process.env.NODE_ENV,
+    environment: getConfigValue("NODE_ENV", "development"),
     memory: process.memoryUsage(),
     uptime: process.uptime(),
-    FRONTEND_URL: process.env.FRONTEND_URL,
+    FRONTEND_URL: getConfigValue("FRONTEND_URL", "http://localhost:3000"),
   });
 });
 declare global {
@@ -92,9 +91,11 @@ app.use((req, res) => {
 });
 seedDB()
   .then(() => {
+    const port = getConfigValue("PORT", "8000");
+
     console.log("DB Ready");
-    app.listen(process.env.PORT || 8000, () => {
-      console.log(`server start at port : ${process.env.PORT || 8000}`);
+    app.listen(port, () => {
+      console.log(`server start at port : ${port}`);
     });
   })
   .catch(() => {

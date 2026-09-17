@@ -1,6 +1,16 @@
 import NeptuneClient from "@opsninja/graph-db";
+import { getConfigValue } from "./config";
 
-const instanceUrl = process.env.AWS_NEPTUNE_ENDPOINT ?? "";
-const instance = NeptuneClient.getInstance(instanceUrl);
+let instance: ReturnType<typeof NeptuneClient.getInstance> | null = null;
 
-export default instance;
+export default {
+  getClient() {
+    if (!instance) {
+      instance = NeptuneClient.getInstance(
+        getConfigValue("AWS_NEPTUNE_ENDPOINT", ""),
+      );
+    }
+
+    return instance;
+  },
+};

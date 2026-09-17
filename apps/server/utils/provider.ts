@@ -3,6 +3,23 @@ import crypto from "crypto";
 import { URLSearchParams } from "node:url";
 import cognitoService from "../service/cognito.service";
 import integrationService from "../service/integration.service";
+import userService from "../service/user.service";
+import { getConfigValue, isProduction, requireConfigValue } from "./config";
+
+const APPLICATION_TOKEN_COOKIE = "application_token";
+const FIFTEEN_DAYS_IN_MS = 15 * 24 * 60 * 60 * 1000;
+
+const appendQueryParams = (
+  redirectUrl: string,
+  params: Record<string, string>,
+) => {
+  const [urlWithoutHash = "", hash] = redirectUrl.split("#");
+  const separator = urlWithoutHash.includes("?") ? "&" : "?";
+  const query = new URLSearchParams(params).toString();
+
+  return `${urlWithoutHash}${separator}${query}${hash ? `#${hash}` : ""}`;
+};
+
 export const PROVIDER_MAPPING: Record<string, string> = {
   jira: "/api/v1/auth/jira/callback",
   google: "/api/v1/auth/google/callback",
@@ -52,10 +69,10 @@ export const AtlassianOAuthInitiator = (req: Request, res: Response) => {
 
     const params = new URLSearchParams({
       audience: "api.atlassian.com",
-      client_id: process.env.ATLASSIAN_CLIENT_ID!,
+      client_id: requireConfigValue("ATLASSIAN_CLIENT_ID"),
       scope:
         "read:jira-work manage:jira-project read:jira-user write:jira-work manage:jira-webhook manage:jira-data-provider manage:jira-configuration offline_access",
-      redirect_uri: process.env.ATLASSIAN_CALLBACK_URI!,
+      redirect_uri: requireConfigValue("ATLASSIAN_CALLBACK_URI"),
       state,
       response_type: "code",
       prompt: "consent",
@@ -66,7 +83,7 @@ export const AtlassianOAuthInitiator = (req: Request, res: Response) => {
     return res.redirect(authorizationUrl);
   } catch (error) {
     console.log(error);
-    return res.status(302).redirect(`${process.env.FAILED_OAUTH_URL}`);
+    return res.status(302).redirect(requireConfigValue("FAILED_OAUTH_URL"));
   }
 };
 
@@ -93,10 +110,10 @@ export const AtlassianOAuthHandler = async (req: Request, res: Response) => {
       },
       body: JSON.stringify({
         grant_type: "authorization_code",
-        client_id: process.env.ATLASSIAN_CLIENT_ID,
-        client_secret: process.env.ATLASSIAN_CLIENT_SECRET,
+        client_id: requireConfigValue("ATLASSIAN_CLIENT_ID"),
+        client_secret: requireConfigValue("ATLASSIAN_CLIENT_SECRET"),
         code,
-        redirect_uri: process.env.ATLASSIAN_CALLBACK_URI,
+        redirect_uri: requireConfigValue("ATLASSIAN_CALLBACK_URI"),
       }),
     });
 
@@ -150,25 +167,46 @@ export const AtlassianOAuthHandler = async (req: Request, res: Response) => {
     //   ).toISOString(),
     // });
 
-    return res.status(301).redirect(process.env.SUCCESS_OAUTH_URL!);
+    return res.status(301).redirect(requireConfigValue("SUCCESS_OAUTH_URL"));
   } catch (error) {
     console.log(error);
-    return res.status(302).redirect(`${process.env.FAILED_OAUTH_URL}`);
+    return res.status(302).redirect(requireConfigValue("FAILED_OAUTH_URL"));
   }
 };
 
 export const cognitoOAuthHandler = async (req: Request, res: Response) => {
-  const { code } = req.query;
+  try {
+    const { code } = req.query;
 
-  if (!code) {
-    return res.status(400).json({
-      error: "Authorization code missing",
+    if (!code) {
+      return res.status(400).json({
+        error: "Authorization code missing",
+      });
+    }
+
+    const tokens = await cognitoService.exchangeCode(code as string);
+    const identity = await cognitoService.getIdentity(tokens);
+    const user = await userService.getOrCreateFromCognito(identity);
+    const applicationToken = cognitoService.generateApplicationToken(
+      user.user_id,
+    );
+
+    res.cookie(APPLICATION_TOKEN_COOKIE, applicationToken, {
+      httpOnly: true,
+      secure: isProduction(),
+      sameSite: "lax",
+      maxAge: FIFTEEN_DAYS_IN_MS,
     });
-  }
 
-  const tokens = await cognitoService.exchangeCode(code as string);
-  const identity = await cognitoService.getIdentity(tokens);
-  console.log(identity);
-  // TODO: handle the user logic with dynamodb
-  return res.status(302).redirect(process.env.SUCCESS_OAUTH_URL!);
+    const redirectUrl = appendQueryParams(requireConfigValue("SUCCESS_OAUTH_URL"), {
+      user_id: user.user_id,
+    });
+
+    return res.status(302).redirect(redirectUrl);
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(302)
+      .redirect(getConfigValue("FAILED_OAUTH_URL", "http://localhost:3000"));
+  }
 };

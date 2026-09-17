@@ -1,0 +1,6 @@
+opsninja.angad.space {
+    reverse_proxy http://localhost:3000
+}
+opsninja.backend.angad.space {
+    reverse_proxy http://localhost:3000
+}

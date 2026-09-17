@@ -17,6 +17,7 @@ import {
   AtlassianOAuthInitiator,
   cognitoOAuthHandler,
 } from "./utils/provider";
+import projectRouter from "./routes/project.route";
 
 await loadConfig();
 

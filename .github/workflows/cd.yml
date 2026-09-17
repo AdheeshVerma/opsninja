@@ -36,7 +36,4 @@ jobs:
             cd ../server
             bun install
 
-            cd ../../packages/db
-            bun run build
-
             pm2 restart all

@@ -1,0 +1,13 @@
+import ProjectDetailsPage from "@/component/ProjectDetailsPage";
+
+type PageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function Page({ params }: PageProps) {
+  const { id } = await params;
+
+  return <ProjectDetailsPage projectId={id} />;
+}

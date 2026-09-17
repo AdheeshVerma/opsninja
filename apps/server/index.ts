@@ -19,6 +19,7 @@ import {
   cognitoOAuthHandler,
   PROVIDER_MAPPING,
 } from "./utils/provider";
+import projectRouter from "./routes/project.route";
 dotenv.config({ path: "../.env" });
 
 const app: Express = express();
@@ -83,6 +84,9 @@ declare global {
 app.get("/api/v1/auth/jira", AtlassianOAuthInitiator);
 app.get("/api/v1/auth/jira/callback", AtlassianOAuthHandler);
 app.get("/api/v1/auth/cognito/callback", cognitoOAuthHandler);
+
+app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/project", projectRouter);
 
 app.use((req, res) => {
   res.status(404).json({

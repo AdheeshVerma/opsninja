@@ -9,4 +9,6 @@ const projectModel = z.object({
   updated_at: z.date().default(() => new Date()),
 });
 
+export type Project = z.infer<typeof projectModel>;
+
 export default projectModel;

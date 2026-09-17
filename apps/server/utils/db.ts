@@ -1,15 +1,19 @@
 import DynamoDB from "@opsninja/db";
+import { getConfigValue } from "./config";
 
-const region = process.env.AWS_DYNAMO_DB_REGION || "us-east-1";
-const accesskey = process.env.AWS_DYNAMO_DB_ACCESS_KEY || "mock-key";
-const accessSecret = process.env.AWS_DYNAMO_DB_ACCESS_SECRET || "mock-secret";
+let instance: DynamoDB | null = null;
 
-let instance: DynamoDB;
-try {
-  instance = DynamoDB.getInstance(region, accesskey, accessSecret);
-} catch {
-  instance = null as any;
-}
+const getDbInstance = () => {
+  if (!instance) {
+    instance = DynamoDB.getInstance(
+      getConfigValue("AWS_DYNAMO_DB_REGION", "us-east-1"),
+      getConfigValue("AWS_DYNAMO_DB_ACCESS_KEY", "mock-key"),
+      getConfigValue("AWS_DYNAMO_DB_ACCESS_SECRET", "mock-secret"),
+    );
+  }
+
+  return instance;
+};
 
 const TABLE_MAPPING: Record<string, string> = {
   Users: "user_id",
@@ -24,21 +28,21 @@ const TABLE_MAPPING: Record<string, string> = {
 
 export async function seedDB() {
   if (
-    !process.env.AWS_DYNAMO_DB_REGION ||
-    !process.env.AWS_DYNAMO_DB_ACCESS_KEY
+    !getConfigValue("AWS_DYNAMO_DB_REGION") ||
+    !getConfigValue("AWS_DYNAMO_DB_ACCESS_KEY")
   ) {
     console.log(
       "[DB] AWS DynamoDB credentials not configured — skipping seedDB",
     );
     return;
   }
-  if (!instance) return;
 
   const tableQuery: any[] = [];
+  const db = getDbInstance();
 
   for (const key of Object.keys(TABLE_MAPPING)) {
     tableQuery.push(
-      instance.createTable(
+      db.createTable(
         key,
         [{ attributeName: TABLE_MAPPING[key] ?? "", keyType: "HASH" }],
         "PAY_PER_REQUEST",
@@ -49,4 +53,8 @@ export async function seedDB() {
   await Promise.all(tableQuery);
 }
 
-export default instance;
+export default {
+  getClient() {
+    return getDbInstance().getClient();
+  },
+};

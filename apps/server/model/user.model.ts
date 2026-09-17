@@ -17,4 +17,6 @@ const userModel = z.object({
   updated_at: z.date().default(() => new Date()),
 });
 
+export type User = z.infer<typeof userModel>;
+
 export default userModel;

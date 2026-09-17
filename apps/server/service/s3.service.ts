@@ -1,18 +1,22 @@
 import { S3Client } from "@aws-sdk/client-s3";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { requireConfigValue } from "../utils/config";
 
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID!;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY!;
-const region = process.env.AWS_S3_REGION;
-const Bucket = process.env.AWS_S3_BUCKET;
+let s3Client: S3Client | null = null;
 
-export const s3 = new S3Client({
-  region: region,
-  credentials: {
-    accessKeyId,
-    secretAccessKey,
-  },
-});
+export const getS3Client = () => {
+  if (!s3Client) {
+    s3Client = new S3Client({
+      region: requireConfigValue("AWS_S3_REGION"),
+      credentials: {
+        accessKeyId: requireConfigValue("AWS_S3_ACCESS_KEY_ID"),
+        secretAccessKey: requireConfigValue("AWS_S3_SECRET_ACCESS_KEY"),
+      },
+    });
+  }
+
+  return s3Client;
+};
 
 class s3Service {
   async uploadFile(
@@ -22,17 +26,19 @@ class s3Service {
   ): Promise<string | null> {
     try {
       const key = `${folder}/${filename}`;
+      const bucket = requireConfigValue("AWS_S3_BUCKET");
+      const region = requireConfigValue("AWS_S3_REGION");
 
       const command = new PutObjectCommand({
-        Bucket: Bucket,
+        Bucket: bucket,
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
       });
 
-      const data = await s3.send(command);
+      const data = await getS3Client().send(command);
       console.log(data);
-      return `https://${Bucket}.s3.${region}.amazonaws.com/${key}`;
+      return `https://${bucket}.s3.${region}.amazonaws.com/${key}`;
     } catch (error) {
       console.error("UPLOAD FAILED:", error);
       return null;
@@ -43,11 +49,11 @@ class s3Service {
     try {
       const fileKey = this.extractFileId(fileUrl);
       const command = new DeleteObjectCommand({
-        Bucket: Bucket,
+        Bucket: requireConfigValue("AWS_S3_BUCKET"),
         Key: fileKey,
       });
 
-      const data = await s3.send(command);
+      const data = await getS3Client().send(command);
       console.log(data);
 
       return "File deleted successfully";

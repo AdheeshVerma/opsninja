@@ -1,31 +1,40 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
+import { redirectToCognito } from "@/lib/auth";
 
 export default function SigninPage() {
-  const [notice, setNotice] = useState("");
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setNotice("Sign-in is not connected yet. Use the workspace preview to explore Ops Ninja.");
-  }
+  useEffect(() => {
+    redirectToCognito();
+  }, []);
 
   return (
-    <main className="auth-page">
-      <form className="auth-card" onSubmit={submit}>
-        <Link href="/" className="brand"><span className="mark" aria-hidden="true"><i /><i /><i /><i /></span>Ops Ninja</Link>
-        <h1>Welcome back</h1>
-        <p>Sign in to continue with your shared operational context.</p>
-        <div className="auth-field"><label htmlFor="email">Work email</label><input id="email" type="email" autoComplete="email" placeholder="you@company.com" required /></div>
-        <div className="auth-field"><label htmlFor="password">Password</label><input id="password" type="password" autoComplete="current-password" placeholder="Enter your password" required /></div>
-        <div className="auth-extras"><label><input type="checkbox" /> Remember me</label><a href="#password">Forgot password?</a></div>
-        <button className="button button-primary auth-submit" type="submit">Sign in</button>
-        {notice ? <p className="auth-notice" role="status">{notice}</p> : null}
-        <div className="auth-divider">or continue with</div>
-        <button className="auth-social" type="button" onClick={() => setNotice("Google sign-in is not configured yet.")}>G <span>Google</span></button>
-        <p className="auth-footer">Don&apos;t have an account? <Link href="/signup">Sign up</Link></p>
-      </form>
+    <main className="flex min-h-screen items-center justify-center bg-[#f5f7f3] px-5 py-10 text-[#20251f]">
+      <section className="w-full max-w-md rounded-3xl border border-[#dfe5dc] bg-white p-8 text-center shadow-xl shadow-[#59745b]/10">
+        <Link href="/" className="text-lg font-bold">
+          Ops Ninja
+        </Link>
+        <h1 className="mt-10 text-3xl font-bold tracking-tight">
+          Taking you to sign in
+        </h1>
+        <p className="mt-3 leading-7 text-[#6a7368]">
+          You will be redirected to secure Cognito authentication.
+        </p>
+        <button
+          className="mt-7 w-full rounded-xl bg-[#20251f] px-4 py-3.5 text-sm font-bold text-white transition hover:bg-[#40503f]"
+          onClick={redirectToCognito}
+          type="button"
+        >
+          Continue to sign in
+        </button>
+        <p className="mt-5 text-sm text-[#7a8278]">
+          Need an account?{" "}
+          <Link className="font-bold text-[#59745b]" href="/signup">
+            Sign up
+          </Link>
+        </p>
+      </section>
     </main>
   );
 }

@@ -18,6 +18,12 @@ import {
   cognitoOAuthHandler,
 } from "./utils/provider";
 import projectRouter from "./routes/project.route";
+import userRouter from "./routes/user.route";
+import integrationRouter from "./routes/integration.route";
+import chatRouter from "./routes/chat.route";
+import messageRouter from "./routes/message.route";
+import meetingRouter from "./routes/meeting.route";
+import actionRouter from "./routes/action.route";
 
 await loadConfig();
 
@@ -86,6 +92,12 @@ app.get("/api/v1/auth/cognito/callback", cognitoOAuthHandler);
 
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/project", projectRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/integrations", integrationRouter);
+app.use("/api/v1/projects/:projectId/chats", chatRouter);
+app.use("/api/v1/projects/:projectId/chats/:chatId/messages", messageRouter);
+app.use("/api/v1/projects/:projectId/meetings", meetingRouter);
+app.use("/api/v1/projects/:projectId/meetings/:meetingId/actions", actionRouter);
 
 app.use((req, res) => {
   res.status(404).json({

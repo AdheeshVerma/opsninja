@@ -1,5 +1,4 @@
-import HomePage from "@/component/HomePage";
+import OpsNinjaApp from "@/component/OpsNinjaApp";
 
-export default function Page() {
-  return <HomePage />;
-}
+export default function Page() { return <OpsNinjaApp />; }
+    

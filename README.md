@@ -5,7 +5,9 @@ The project takes in the Minutes of Meeting and use them inorder to generate a m
 # What we provide
 
 | KPI                           |      Example | Why it matters                               |
-| ----------------------------- | -----------: | -------------------------------------------- |
+| ----------------------------- |
+
+ -----------: | -------------------------------------------- |
 | **Execution Rate**            |      **84%** | Are commitments actually completed?          |
 | **Commitment Reliability**    |      **91%** | Are teams delivering what they promise?      |
 | **Decision Velocity**         | **2.7 days** | How quickly are decisions made?              |

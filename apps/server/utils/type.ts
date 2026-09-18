@@ -60,6 +60,8 @@ export interface Message {
   message_type: "USER" | "SYSTEM";
   created_at: string;
   updated_at: string;
+  structured_response?: string;
+  proposed_actions?: string;
 }
 
 export interface CreateMessageDTO {

@@ -1,5 +1,6 @@
 import actionRepository from "../repository/action.repository";
 import meetingWorkflowService from "../service/meetingWorkflow.service";
+import graphService from "../service/graph.service";
 import type { MeetingActionItem, UpdateActionDTO } from "../utils/type";
 import type { ActionProposal } from "../utils/agent.types";
 import type { JiraCredentials } from "../agent/jira.agent";
@@ -49,6 +50,12 @@ class ActionController {
       action_status: finalStatus,
       action_by: approvedBy,
     });
+
+    try {
+      await graphService.linkActionResult(actionId, result);
+    } catch {
+      // Neptune failure must not break the action response
+    }
 
     return { action_id: actionId, action_status: finalStatus, result };
   }

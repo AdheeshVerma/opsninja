@@ -3,6 +3,8 @@ import meetingRepository from "../repository/meeting.repository";
 import meetingRecordRepository from "../repository/meetingRecord.repository";
 import actionRepository from "../repository/action.repository";
 import meetingWorkflowService from "../service/meetingWorkflow.service";
+import embeddingService from "../service/embedding.service";
+import graphService from "../service/graph.service";
 import type { Meeting, CreateMeetingDTO, MeetingRecord, MeetingActionItem } from "../utils/type";
 import type { ActionProposal } from "../utils/agent.types";
 
@@ -47,6 +49,15 @@ class MeetingController {
     };
 
     await meetingRecordRepository.createRecord(record);
+
+    const summaryEmbedding = await embeddingService.embed(minutes.summary);
+    await graphService.indexMeeting({
+      projectId,
+      meetingId: meeting.meeting_id,
+      recordId: record.record_id,
+      minutes,
+      summaryEmbedding,
+    });
 
     for (const proposal of proposals) {
       const actionNow = new Date().toISOString();

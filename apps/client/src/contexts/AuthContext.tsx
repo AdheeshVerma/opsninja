@@ -14,7 +14,11 @@ interface User {
   user_id: string;
   user_name: string;
   email: string;
+  user_email?: string;
   profile_pic?: string;
+  atlassian_connected?: boolean;
+  slack_connected?: boolean;
+  calendar_connected?: boolean;
 }
 
 interface AuthContextType {
@@ -27,13 +31,22 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+function normalizeUser(raw: any): User | null {
+  if (!raw) return null;
+  return {
+    ...raw,
+    email: raw.email || raw.user_email || "",
+  };
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const fetchUser = async () => {
     try {
       const { data } = await axiosInstance.get("/api/v1/users/me");
-      setUser(data.data);
+      setUser(normalizeUser(data.data));
     } catch {
       setUser(null);
     } finally {
@@ -47,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     axiosInstance
       .get("/api/v1/users/me")
       .then(({ data }) => {
-        if (isMounted) setUser(data.data);
+        if (isMounted) setUser(normalizeUser(data.data));
       })
       .catch(() => {
         if (isMounted) setUser(null);

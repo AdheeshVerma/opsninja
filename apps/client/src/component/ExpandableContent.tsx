@@ -17,12 +17,12 @@ export default function ExpandableContent({
 
   return (
     <div>
-      <p className="whitespace-pre-wrap text-sm leading-7 text-text-secondary">
+      <p className="whitespace-pre-wrap text-sm leading-7 text-[#596257]">
         {visible || "No transcript available."}
       </p>
       {shouldExpand ? (
         <button
-          className="mt-3 text-sm font-semibold text-brand hover:text-brand-hover"
+          className="mt-3 text-xs font-bold text-[#59745b] transition hover:text-[#20251f]"
           type="button"
           onClick={() => setExpanded((current) => !current)}
         >

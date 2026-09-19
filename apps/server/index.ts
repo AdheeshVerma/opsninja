@@ -16,6 +16,7 @@ import {
   AtlassianOAuthHandler,
   AtlassianOAuthInitiator,
   cognitoOAuthHandler,
+  cognitoOAuthInitiator,
   logoutHandler,
 } from "./utils/provider";
 import projectRouter from "./routes/project.route";
@@ -110,6 +111,7 @@ declare global {
 
 app.get("/api/v1/auth/jira", AtlassianOAuthInitiator);
 app.get("/api/v1/auth/jira/callback", AtlassianOAuthHandler);
+app.get("/api/v1/auth/cognito", cognitoOAuthInitiator);
 app.get("/api/v1/auth/cognito/callback", cognitoOAuthHandler);
 app.post("/api/v1/auth/setup-cookie", (req: Request, res: Response) => {
   // This endpoint acknowledges the cookie setup from the auth-success page

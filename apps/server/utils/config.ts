@@ -5,6 +5,8 @@ import path from "path";
 // Load environment variables from root and current directory
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env") });
 dotenv.config({ path: path.resolve(process.cwd(), "../.env") });
+dotenv.config({ path: path.resolve(process.cwd(), "apps/server/.env") });
+dotenv.config({ path: path.resolve(import.meta.dir, "../.env") });
 dotenv.config();
 
 type SecretValues = Record<string, string>;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import GetStartedButton from "@/component/GetStartedButton";
 
 function Mark() {
   return (
@@ -29,18 +30,7 @@ export default function LandingPage() {
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <Link
-            href="/signin"
-            className="hidden px-3 py-2 text-sm font-semibold text-[#596257] sm:block"
-          >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-full bg-[#20251f] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#40503f]"
-          >
-            Get started
-          </Link>
+          <GetStartedButton />
         </div>
       </nav>
       <section className="mx-auto grid max-w-7xl gap-14 px-6 pb-20 pt-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10 lg:pb-28 lg:pt-20">
@@ -61,12 +51,7 @@ export default function LandingPage() {
             a deliberate human decision.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-4">
-            <Link
-              href="/signup"
-              className="rounded-full bg-[#20251f] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#20251f]/15 transition hover:-translate-y-0.5 hover:bg-[#40503f]"
-            >
-              Create your workspace
-            </Link>
+            <GetStartedButton variant="large" />
             <a
               href="#how-it-works"
               className="text-sm font-bold text-[#59745b]"

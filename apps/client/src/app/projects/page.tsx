@@ -1,5 +1,5 @@
 import WorkspacePage from "@/component/WorkspacePage";
 
 export default function Page() {
-  return <WorkspacePage section="integrations" />;
+  return <WorkspacePage section="projects" />;
 }

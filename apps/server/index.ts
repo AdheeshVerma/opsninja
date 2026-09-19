@@ -111,6 +111,14 @@ declare global {
 app.get("/api/v1/auth/jira", AtlassianOAuthInitiator);
 app.get("/api/v1/auth/jira/callback", AtlassianOAuthHandler);
 app.get("/api/v1/auth/cognito/callback", cognitoOAuthHandler);
+app.post("/api/v1/auth/setup-cookie", (req: Request, res: Response) => {
+  // This endpoint acknowledges the cookie setup from the auth-success page
+  // The cookie is already set by cognitoOAuthHandler, this just confirms it
+  res.status(200).json({
+    success: true,
+    message: "Cookie setup acknowledged",
+  });
+});
 app.get("/api/v1/auth/logout", logoutHandler);
 
 app.use("/api/v1/projects", projectRouter);

@@ -1,4 +1,5 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 export function redirectToCognito(): void {
   const loginUrl = process.env.NEXT_PUBLIC_COGNITO_LOGIN_URL;
@@ -7,9 +8,10 @@ export function redirectToCognito(): void {
     alert("Authentication is not configured. Please contact support.");
     return;
   }
-  window.location.href = loginUrl;
+  console.log(loginUrl);
+  window.open(loginUrl, "_self");
 }
 
 export function redirectToLogout(): void {
-  window.location.href = `${API_BASE}/api/v1/auth/logout`;
+  window.open(`${API_BASE}/api/v1/auth/logout`, "_self");
 }

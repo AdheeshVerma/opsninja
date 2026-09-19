@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type PageScaffoldProps = {
   title: string;
   description: string;
@@ -17,8 +19,18 @@ export default function PageScaffold({
   return (
     <main className="page-scaffold">
       <nav className="resource-nav">
-        <Link href="/" className="brand"><span className="mark" aria-hidden="true"><i /><i /><i /><i /></span>Ops Ninja</Link>
-        <Link href="/home" className="button button-quiet small">Open workspace</Link>
+        <Link href="/" className="brand">
+          <span className="mark" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+            <i />
+          </span>
+          Ops Ninja
+        </Link>
+        <Link href="/home" className="button button-quiet small">
+          Open workspace
+        </Link>
       </nav>
       <section className="resource-page">
         <div className="resource-intro">
@@ -41,4 +53,3 @@ export default function PageScaffold({
     </main>
   );
 }
-import Link from "next/link";

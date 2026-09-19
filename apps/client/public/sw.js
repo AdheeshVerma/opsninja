@@ -1,7 +1,5 @@
 const CACHE_NAME = "ops-ninja-v1";
 const APP_SHELL = [
-  "/",
-  "/home",
   "/offline",
   "/manifest.webmanifest",
   "/logo.png",

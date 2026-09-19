@@ -1,9 +1,14 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { useRouter } from "next/navigation";
-import { redirectToCognito } from "@/lib/auth";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
 import axiosInstance from "@/lib/axiosInstance";
+import { redirectToLogout } from "@/lib/auth";
 
 interface User {
   user_id: string;
@@ -25,13 +30,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-
   const fetchUser = async () => {
     try {
       const { data } = await axiosInstance.get("/api/v1/users/me");
       setUser(data.data);
-    } catch (error) {
+    } catch {
       setUser(null);
     } finally {
       setIsLoading(false);
@@ -39,11 +42,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    fetchUser();
+    let isMounted = true;
+
+    axiosInstance
+      .get("/api/v1/users/me")
+      .then(({ data }) => {
+        if (isMounted) setUser(data.data);
+      })
+      .catch(() => {
+        if (isMounted) setUser(null);
+      })
+      .finally(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const logout = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/v1/auth/logout`;
+    redirectToLogout();
   };
 
   const refreshUser = async () => {

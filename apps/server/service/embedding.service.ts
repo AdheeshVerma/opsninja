@@ -1,22 +1,22 @@
-import { GoogleGenAI } from "@google/genai";
+import { OpenRouter } from "@openrouter/sdk";
 import { requireConfigValue } from "../utils/config";
 
 class EmbeddingService {
-  private client?: GoogleGenAI;
+  private client?: OpenRouter;
 
   private getClient() {
-    this.client ??= new GoogleGenAI({
-      apiKey: requireConfigValue("GEMINI_API_KEY"),
+    this.client ??= new OpenRouter({
+      apiKey: requireConfigValue("OPENROUTER_API_KEY"),
     });
     return this.client;
   }
 
   async embed(text: string): Promise<number[]> {
-    const response = await this.getClient().models.embedContent({
-      model: "text-embedding-004",
-      contents: text,
+    const response = await this.getClient().embeddings.create({
+      model: "openai/text-embedding-3-small",
+      input: text,
     });
-    return response.embeddings?.[0]?.values ?? [];
+    return response.data?.[0]?.embedding ?? [];
   }
 }
 

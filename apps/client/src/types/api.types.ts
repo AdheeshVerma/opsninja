@@ -1,8 +1,12 @@
 export interface User {
   user_id: string;
   user_name: string;
-  email: string;
+  email?: string;
+  user_email?: string;
   profile_pic?: string;
+  atlassian_connected?: boolean;
+  slack_connected?: boolean;
+  calendar_connected?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -54,8 +58,8 @@ export interface ActionItem {
   title: string;
   description?: string;
   assignee?: string;
-  action_type: "jira" | "slack" | "manual";
-  action_status: "pending" | "in_progress" | "completed" | "failed";
+  action_type: "jira" | "slack" | "manual" | "create_jira_issue" | "send_slack_message" | "create_calendar_event" | string;
+  action_status: "pending" | "in_progress" | "completed" | "failed" | "success" | "initialized" | "un_initialized";
   priority?: "high" | "medium" | "low";
   target?: string;
   error_message?: string;

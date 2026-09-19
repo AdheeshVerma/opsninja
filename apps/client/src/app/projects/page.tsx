@@ -1,5 +1,10 @@
-import WorkspacePage from "@/component/WorkspacePage";
+import WorkspaceLayout from "@/component/WorkspaceLayout";
+import ProjectPage from "@/component/ProjectPage";
 
 export default function Page() {
-  return <WorkspacePage section="projects" />;
+  return (
+    <WorkspaceLayout>
+      <ProjectPage />
+    </WorkspaceLayout>
+  );
 }

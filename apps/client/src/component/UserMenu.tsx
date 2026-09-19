@@ -16,7 +16,7 @@ export default function UserMenu() {
   if (isLoading) {
     return (
       <span
-        className="inline-flex h-9 w-9 animate-pulse rounded-full bg-surface-muted"
+        className="inline-flex h-9 w-9 animate-pulse rounded-full bg-[#f0f4ee]"
         aria-label="Loading user"
       />
     );
@@ -26,7 +26,7 @@ export default function UserMenu() {
     return (
       <Link
         href="/signin"
-        className="inline-flex min-h-9 items-center rounded-pill border border-border-strong px-3 text-sm font-semibold text-text-secondary"
+        className="inline-flex min-h-9 items-center rounded-xl border border-[#dfe5dc] px-3.5 py-1.5 text-xs font-bold text-[#20251f] transition hover:bg-[#fafaf8]"
       >
         Sign in
       </Link>
@@ -35,16 +35,19 @@ export default function UserMenu() {
 
   return (
     <div className="flex items-center gap-3">
-      <div className="text-right">
-        <strong className="block text-sm text-text-primary">
+      <div className="hidden text-right sm:block">
+        <strong className="block text-xs font-bold text-[#20251f]">
           {user.user_name}
         </strong>
-        <span className="block text-xs text-text-muted">{user.email}</span>
+        <span className="block text-[11px] text-[#8a9587]">
+          {user.email || user.user_email || "Operator"}
+        </span>
       </div>
       <button
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-text-primary text-sm font-semibold text-surface"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#20251f] text-xs font-bold text-white shadow-sm transition hover:bg-[#343e33]"
         type="button"
         onClick={logout}
+        title="Click to log out"
         aria-label="Log out"
       >
         {initials}

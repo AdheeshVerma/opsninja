@@ -174,6 +174,29 @@ export const AtlassianOAuthHandler = async (req: Request, res: Response) => {
   }
 };
 
+export const cognitoOAuthInitiator = (req: Request, res: Response) => {
+  try {
+    const domain = requireConfigValue("AWS_COGNITO_DOMAIN");
+    const clientId = requireConfigValue("AWS_COGNITO_CLIENT_ID");
+    const redirectUri = requireConfigValue("AWS_COGNITO_REDIRECT_URI");
+
+    const params = new URLSearchParams({
+      client_id: clientId,
+      response_type: "code",
+      scope: "email openid profile",
+      redirect_uri: redirectUri,
+    });
+
+    const loginUrl = `${domain}/login?${params.toString()}`;
+    return res.redirect(loginUrl);
+  } catch (error) {
+    console.log("Cognito initiator error:", error);
+    return res
+      .status(302)
+      .redirect(getConfigValue("FAILED_OAUTH_URL", "http://localhost:3000/?error=auth_failed"));
+  }
+};
+
 export const cognitoOAuthHandler = async (req: Request, res: Response) => {
   try {
     const { code } = req.query;

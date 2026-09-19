@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/about", "/offline", "/privacy-policy"];
+const PUBLIC_PATHS = [
+  "/",
+  "/about",
+  "/offline",
+  "/privacy-policy",
+  "/signin",
+  "/signup",
+  "/oauth",
+  "/oauth/success",
+  "/auth-success",
+];
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("application_token");
@@ -12,15 +22,8 @@ export function middleware(request: NextRequest) {
   );
 
   if (!token && !isPublic) {
-    const loginUrl = process.env.NEXT_PUBLIC_COGNITO_LOGIN_URL;
-    if (!loginUrl) {
-      console.error("NEXT_PUBLIC_COGNITO_LOGIN_URL is not configured");
-      // Redirect to home page with error parameter
-      const url = new URL("/", request.url);
-      url.searchParams.set("error", "config");
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.redirect(loginUrl);
+    const url = new URL("/signin", request.url);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
